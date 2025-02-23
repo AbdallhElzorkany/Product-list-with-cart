@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Red+Hat+Text:ital,wght@0,300..700;1,300..700&display=swap');
+
+@theme{
+  --font-red-hat-text: 'Red Hat Text',serif;
+}
+
+*{
+  font-family: var(--font-red-hat-text);
+  box-sizing: border-box;
+}
+
+
