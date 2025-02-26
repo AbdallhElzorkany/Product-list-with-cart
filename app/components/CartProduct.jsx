@@ -10,7 +10,7 @@ const CartProduct = ({ item, cart, setCart }) => {
         </span>
       </p>
       <svg
-        className="absolute top-[50%] cursor-pointer border-Rose300 border-[0.5px] hover:border-Rose900 hover:stroke-Rose900 rounded-full size-4 p-[2px] right-0 cursor-pointer"
+        className="absolute top-[50%]  border-Rose300 border-[0.5px] hover:border-Rose900 hover:stroke-Rose900 rounded-full size-4 p-[2px] right-0 cursor-pointer"
         onClick={() => {
           setCart(
             cart.map((cartItem) => {
