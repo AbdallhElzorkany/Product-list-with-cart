@@ -1,27 +1,4 @@
-import { useState, useEffect } from "react";
 const Dessert = function ({ dessertItem, cart, setCart }) {
-  const [dessertsCounter, setDessertsCounter] = useState(0);
-  useEffect(() => {
-    // Update cart when dessert counter changes
-    if (dessertsCounter > 0) {
-      const existingItem = cart.find((item) => item.name === dessertItem.name);
-      if (existingItem) {
-        setCart(
-          cart.map((item) =>
-            item.name === dessertItem.name
-              ? { ...item, quantity: dessertsCounter }
-              : item
-          )
-        );
-      } else {
-        setCart([...cart, { ...dessertItem, quantity: dessertsCounter }]);
-      }
-    } else {
-      // Remove item from cart when counter is 0
-      setCart(cart.filter((item) => item.name !== dessertItem.name));
-    }
-  }, [dessertsCounter]);
-
   return (
     <div>
       <div className="relative">
@@ -30,10 +7,22 @@ const Dessert = function ({ dessertItem, cart, setCart }) {
           src={`./${dessertItem.image.desktop}`}
           alt=""
         />
-        {!dessertsCounter ? (
+        {!dessertItem.quantity ? (
           <div
             className=" bottom-[-18px] max-md:left[10%] left-[20%] w-3/5 justify-center cursor-pointer absolute flex  rounded-full border-Rose500 border-[1px] bg-Rose50 px-3 font py-2 hover:border-Red hover:text-Red"
-            onClick={() => setDessertsCounter(dessertsCounter + 1)}
+            onClick={() =>
+              setCart(
+                cart.map((item) => {
+                  if (item.name === dessertItem.name) {
+                    return {
+                      ...item,
+                      quantity: item.quantity + 1,
+                    };
+                  }
+                  return item;
+                })
+              )
+            }
           >
             <img src="./icon-add-to-cart.svg" alt="" className="mr-3" />
             <div className="font-[600]">Add To Cart</div>
@@ -47,11 +36,23 @@ const Dessert = function ({ dessertItem, cart, setCart }) {
               height="2"
               fill="none"
               viewBox="0 0 10 2"
-              onClick={() => setDessertsCounter(dessertsCounter - 1)}
+              onClick={() =>
+                setCart(
+                  cart.map((item) => {
+                    if (item.name === dessertItem.name) {
+                      return {
+                        ...item,
+                        quantity: item.quantity - 1,
+                      };
+                    }
+                    return item;
+                  })
+                )
+              }
             >
               <path fill="#fff" d="M0 .375h10v1.25H0V.375Z" />
             </svg>
-            <span className="text-white">{dessertsCounter}</span>
+            <span className="text-white">{dessertItem.quantity}</span>
             <svg
               className="border-white border-[0.5px] size-5 p-[3px] rounded-full cursor-pointer hover:bg-white hover:stroke-Red "
               xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +60,19 @@ const Dessert = function ({ dessertItem, cart, setCart }) {
               height="10"
               fill="none"
               viewBox="0 0 10 10"
-              onClick={() => setDessertsCounter(dessertsCounter + 1)}
+              onClick={() =>
+                setCart(
+                  cart.map((item) => {
+                    if (item.name === dessertItem.name) {
+                      return {
+                        ...item,
+                        quantity: item.quantity + 1,
+                      };
+                    }
+                    return item;
+                  })
+                )
+              }
             >
               <path
                 fill="#fff"

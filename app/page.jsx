@@ -1,9 +1,16 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useContext, createContext, useEffect, useRef, useState } from "react";
 import Dessert from "./components/dessert.jsx";
 import data from "@/public/data.json";
+import CartProduct from "./components/CartProduct.jsx";
 export default function Home() {
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(
+    data.map((item) => ({
+      ...item,
+      quantity: 0,
+    }))
+  );
+
   const ConfirmRef = useRef(null);
   return (
     <div className="bg-Rose100 p-10 relative">
@@ -11,7 +18,7 @@ export default function Home() {
         <div className=" col-span-3  max-xl:col-span-4">
           <h1 className="font-bold  mb-10 text-3xl font">Desserts</h1>
           <div className="grid max-md:grid-cols-1 max-lg:grid-cols-2 grid-cols-3 gap-5">
-            {data.map((item, index) => (
+            {cart.map((item, index) => (
               <Dessert
                 key={index + 1}
                 cart={cart}
@@ -23,51 +30,21 @@ export default function Home() {
         </div>
         <div className="max-lg:col-span-4 max-xl:col-span-3 bg-Rose50 max-h-fit p-5 rounded-xl col-span-1">
           <h1 className="text-xl font-semibold text-Red w-full">
-            Your Cart ({cart.length})
+            Your Cart ({cart.filter((item) => item.quantity > 0).length})
           </h1>
           {cart.length ? (
             <div>
               <div>
-                {cart.map((item, index) => (
-                  <div
-                    className="relative py-5 border-b-2 border-Rose100"
-                    key={index}
-                  >
-                    <h1 className="font-semibold mb-1 text-sm ">{item.name}</h1>
-                    <p className="text-sm">
-                      <span className="text-Red font-bold mr-2">
-                        {item.quantity}x
-                      </span>{" "}
-                      <span className="text-Rose400 font-medium mx-1">
-                        @ ${item.price}
-                      </span>{" "}
-                      <span className="font-bold text-Rose500">
-                        ${item.price * item.quantity}
-                      </span>
-                    </p>
-                    <svg
-                      className="absolute top-[50%] cursor-pointer border-Rose300 border-[0.5px] hover:border-Rose900 hover:stroke-Rose900 rounded-full size-4 p-[2px] right-0 cursor-pointer"
-                      onClick={() => {
-                        setCart(
-                          cart.map((item) =>
-                            item.name === item.name ? (item.quantity = 0) : item
-                          )
-                        );
-                        setCart(cart.filter((item) => item.name !== item.name));
-                      }}
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="10"
-                      height="10"
-                      fill="none"
-                      viewBox="0 0 10 10"
-                    >
-                      <path
-                        fill="#CAAFA7"
-                        d="M8.375 9.375 5 6 1.625 9.375l-1-1L4 5 .625 1.625l1-1L5 4 8.375.625l1 1L6 5l3.375 3.375-1 1Z"
-                      />
-                    </svg>
-                  </div>
-                ))}
+                {cart.map((item, index) =>
+                  item.quantity > 0 ? (
+                    <CartProduct
+                      key={index}
+                      item={item}
+                      cart={cart}
+                      setCart={setCart}
+                    />
+                  ) : null
+                )}
               </div>
               <div className="flex justify-between py-5 items-center">
                 <span>Order Total</span>
@@ -106,7 +83,11 @@ export default function Home() {
               </div>
               <button
                 className="w-full mt-4 hover:bg-red-800 py-3 bg-Red rounded-full text-white"
-                onClick={()=>{ConfirmRef.current.style.display = "block"}}
+                onClick={() => {
+                  if (cart.filter((item) => item.quantity > 0).length) {
+                    ConfirmRef.current.style.display = "block";
+                  }
+                }}
               >
                 Confirm Order
               </button>
@@ -183,13 +164,15 @@ export default function Home() {
           position: "absolute",
           top: "0",
           left: "0",
-          display:"none"
+          display: "none",
         }}
         className="bg-black/50"
       >
-        <div className=" bg-Rose50   max-h-fit p-10 rounded-xl absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]
+        <div
+          className=" bg-Rose50   max-h-fit p-10 rounded-xl absolute max-md:top-[50%] top-[5%] left-[50%] translate-x-[-50%]
         max-md:w-[100%] max-md:bottom-[-100%] max-md:translate-y-[100%]   max-md:p-5  max-md:rounded-none max-md:rounded-t-xl 
-        ">
+        "
+        >
           <svg
             width="48"
             height="48"
@@ -209,36 +192,41 @@ export default function Home() {
           <h1 className="max-md:text-5xl  ml-2 text-3xl font-bold text-Rose900 w-full">
             Order Confirmed
           </h1>
-          <p className="text-Rose500 mb-6 ml-3 max-md:text-xl ">We hope you enjoy your food!</p>
+          <p className="text-Rose500 mb-6 ml-3 max-md:text-xl ">
+            We hope you enjoy your food!
+          </p>
           <div className="bg-Rose100  rounded-xl p-3">
-            {cart.map((item, index) => (
-              <div
-                className="relative py-5 border-b-2 border-Rose300 flex justify-center items-center"
-                key={index}
-              >
-                <img
-                  className="size-12 rounded-xl mr-4"
-                  src={
-                    data.filter((x) => x.name === item.name)[0].image.thumbnail
-                  }
-                  alt=""
-                />
-                <div className=" ">
-                  <h1 className="font-semibold mb-1 text-sm ">{item.name}</h1>
-                  <p className="text-sm relative max-lg:pr-40 pr-80">
-                    <span className="text-Red font-bold mr-2">
-                      {item.quantity}x
-                    </span>{" "}
-                    <span className="text-Rose400 font-medium mx-1">
-                      @ ${item.price}
-                    </span>{" "}
-                    <span className="font-bold  text-Rose900 absolute right-0 top-[-50%]">
-                      ${item.price * item.quantity}
-                    </span>
-                  </p>
+            {cart.map((item, index) =>
+              item.quantity > 0 ? (
+                <div
+                  className="relative py-5 border-b-2 border-Rose300 flex justify-center items-center"
+                  key={index}
+                >
+                  <img
+                    className="size-12 rounded-xl mr-4"
+                    src={
+                      data.filter((x) => x.name === item.name)[0].image
+                        .thumbnail
+                    }
+                    alt=""
+                  />
+                  <div className=" ">
+                    <h1 className="font-semibold mb-1 text-sm ">{item.name}</h1>
+                    <p className="text-sm relative max-lg:pr-40 pr-80">
+                      <span className="text-Red font-bold mr-2">
+                        {item.quantity}x
+                      </span>{" "}
+                      <span className="text-Rose400 font-medium mx-1">
+                        @ ${item.price}
+                      </span>{" "}
+                      <span className="font-bold  text-Rose900 absolute right-0 top-[-50%]">
+                        ${item.price * item.quantity}
+                      </span>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ) : null
+            )}
             <div className="flex justify-between py-5 items-center">
               <span className="text-Rose500 font-semibold">Order Total</span>
               <span className="font-bold text-xl">
@@ -253,7 +241,12 @@ export default function Home() {
           <button
             onClick={() => {
               ConfirmRef.current.style.display = "none";
-              setCart([]);
+              setCart(
+                cart.map((item) => {
+                  item.quantity = 0;
+                  return item;
+                })
+              );
             }}
             className="w-full mt-4 hover:bg-red-800 py-3 bg-Red rounded-full text-white"
           >
